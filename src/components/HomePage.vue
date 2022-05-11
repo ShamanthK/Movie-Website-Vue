@@ -1,0 +1,81 @@
+<template>
+  <div class="margin">
+    <popular-movies :path="imagePath" :movies="popularMovies"></popular-movies>
+  </div>
+  <div class="margin-50"><h2>Now Playing</h2></div>
+  <home-content
+    :path="imagePath"
+    :content="nowPlaying"
+    type="title"
+    img="poster_path"
+    filter="Movie"
+  ></home-content>
+  <div class="margin-50"><h2>Popular TV</h2></div>
+  <home-content
+    :path="imagePath"
+    :content="popularTv"
+    type="original_name"
+    img="poster_path"
+    filter="Tv"
+  ></home-content>
+  <div class="margin-50"><h2>Popular Celebs</h2></div>
+  <home-content
+    :path="imagePath"
+    :content="celebs"
+    type="name"
+    img="profile_path"
+    filter="Celeb"
+  ></home-content>
+</template>
+
+<script>
+import PopularMovies from "./Movies/PopularMovies.vue";
+import HomeContent from "./Shared/HomeContent.vue";
+
+export default {
+  components: {
+    PopularMovies,
+    HomeContent,
+  },
+  data() {
+    return {
+      popularMovies: [],
+      nowPlaying: [],
+      popularTv: [],
+      celebs: [],
+      imagePath: "https://image.tmdb.org/t/p/w500",
+    };
+  },
+  created() {
+    this.loadContent();
+  },
+  methods: {
+    async loadContent() {
+      await this.$store.dispatch("movies/loadPopularMovies", 1);
+      await this.$store.dispatch("movies/loadNowPlaying");
+      await this.$store.dispatch("tv/loadPopularTv", 1);
+      await this.$store.dispatch("celebs/loadCelebs", 1);
+      this.popularMovies = await this.$store.getters["movies/popularMovies"];
+      console.log(this.popularMovies);
+      this.nowPlaying = await this.$store.getters["movies/nowPlaying"];
+      this.popularTv = await this.$store.getters["tv/popularTv"];
+      this.celebs = await this.$store.getters["celebs/celebs"];
+    },
+  },
+};
+</script>
+
+<style scoped>
+.margin {
+  margin-top: 20px;
+  color: white;
+}
+.margin-50 {
+  margin-top: 50px;
+  color: white;
+}
+h2 {
+  color: white;
+}
+</style>
+
