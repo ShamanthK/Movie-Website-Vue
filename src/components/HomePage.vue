@@ -26,6 +26,15 @@
     img="profile_path"
     filter="Celeb"
   ></home-content>
+
+  <div style="color: white; display: flex; align-items: center; flex-direction: column; padding: 20px">
+    <b>Data and Image Source: </b>
+    <img
+      src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg"
+      width="100"
+      height="100"
+    />
+  </div>
 </template>
 
 <script>
