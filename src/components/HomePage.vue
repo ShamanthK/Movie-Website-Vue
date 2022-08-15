@@ -27,7 +27,15 @@
     filter="Celeb"
   ></home-content>
 
-  <div style="color: white; display: flex; align-items: center; flex-direction: column; padding: 20px">
+  <div
+    style="
+      color: white;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+    "
+  >
     <b>Data and Image Source: </b>
     <img
       src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg"
@@ -69,6 +77,7 @@ export default {
       this.nowPlaying = await this.$store.getters["movies/nowPlaying"];
       this.popularTv = await this.$store.getters["tv/popularTv"];
       this.celebs = await this.$store.getters["celebs/celebs"];
+      console.log(this.celebs);
     },
   },
 };
@@ -82,6 +91,8 @@ export default {
 .margin-50 {
   margin-top: 50px;
   color: white;
+  margin-left: 35px;
+  margin-bottom: 25px;
 }
 h2 {
   color: white;

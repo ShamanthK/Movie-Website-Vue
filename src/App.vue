@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #121212">
+  <div style="background: linear-gradient(to right, teal, black, teal)">
     <the-header></the-header>
     <router-view></router-view>
   </div>

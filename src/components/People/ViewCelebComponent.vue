@@ -20,32 +20,30 @@
             imdbName + celebDetails.imdb_id
           }}</a>
         </p>
-        <h3>Gallery</h3>
-        <div class="gallery">
-          <div
-            v-for="image in profileImages"
-            :key="image.vote_count"
-            style="padding: 10px"
-          >
-            <!-- <img
-              :src="imagePath + image.file_path"
-              alt="Movies"
-              width="150"
-              height="175"
-              class="imageContent"
-            /> -->
-            <a-image
-              :width="150"
-              :src="imagePath + image.file_path"
-            />
-          </div>
-        </div>
       </div>
     </div>
     <div class="biography">
       <h3>Biography</h3>
       <p>{{ celebDetails.biography }}</p>
-      <h3>Top Rated Movies/TV</h3>
+      <h3>Gallery</h3>
+      <div class="gallery">
+        <Carousel
+          :settings="settingsImg"
+          :breakpoints="breakpointsImg"
+          style="overflow: hidden"
+        >
+          <Slide v-for="image in profileImages" :key="image.vote_count">
+            <div>
+              <a-image :width="150" :src="imagePath + image.file_path" />
+            </div>
+          </Slide>
+          <template #addons>
+            <Pagination />
+          </template>
+        </Carousel>
+        <!-- </div> -->
+      </div>
+      <h3 style="margin-top: 25px">Top Rated Movies/TV</h3>
       <div class="top">
         <Carousel
           :settings="settings"
@@ -84,85 +82,92 @@
       </div>
       <div>
         <h3>All Movies/TV</h3>
-        <h4>Movies</h4>
-        <div
-          v-for="(movie, index) of movieCredits"
-          :key="movie.title"
-          class="movieCredit"
-        >
-          <p
-            v-bind:style="{
-              color:
-                movie.vote_average >= 7
-                  ? 'green'
-                  : movie.vote_average < 7 && movie.vote_average >= 4
-                  ? 'yellow'
-                  : movie.vote_average < 4
-                  ? 'red'
-                  : '',
-            }"
-          >
-            {{ movie.vote_average * 10 }}%
-          </p>
-          <p
-            @mouseover="highlightMovie(index)"
-            @mouseleave="disableHighlightMovie()"
-            v-bind:style="{
-              color:
-                highlightMovieCredit && index === highlightIndex
-                  ? 'deepskyblue'
-                  : 'white',
-              cursor: 'pointer',
-            }"
-            @click="openMovieCredit(movie)"
-          >
-            &nbsp; &nbsp; {{ movie.title }} ({{
-              movie.release_date ? movie.release_date.split("-")[0] : ""
-            }})
-          </p>
-          <p class="character">
-            &nbsp; - &nbsp; <i>{{ movie.character }}</i>
-          </p>
-        </div>
-        <h4>TV</h4>
-        <div
-          v-for="(tv, index) of tvCredits"
-          :key="tv.original_name"
-          class="movieCredit"
-        >
-          <p
-            v-bind:style="{
-              color:
-                tv.vote_average * 10 >= 7
-                  ? 'green'
-                  : tv.vote_average * 10 < 7 && tv.vote_average * 10 >= 4
-                  ? 'yellow'
-                  : 'red',
-              cursor: 'pointer',
-            }"
-          >
-            {{ tv.vote_average * 10 }}%
-          </p>
-          <p
-            @mouseover="highlightTv(index)"
-            @mouseleave="disableHighlightTv()"
-            v-bind:style="{
-              color:
-                highlightTvCredit && index === highlightIndex
-                  ? 'deepskyblue'
-                  : 'white',
-              cursor: 'pointer',
-            }"
-            @click="openTvCredit(tv)"
-          >
-            &nbsp; &nbsp; {{ tv.original_name }} ({{
-              tv.first_air_date ? tv.first_air_date.split("-")[0] : ""
-            }})
-          </p>
-          <p class="character">
-            &nbsp; - &nbsp; <i>{{ tv.character }}</i>
-          </p>
-        </div>
+        <a-collapse>
+          <a-collapse-panel key="1" header="Movies" class="collapsePanel">
+            <div
+              v-for="(movie, index) of movieCredits"
+              :key="movie.title"
+              class="movieCredit"
+            >
+              <p
+                v-bind:style="{
+                  color:
+                    movie.vote_average >= 7
+                      ? 'green'
+                      : movie.vote_average < 7 && movie.vote_average >= 4
+                      ? 'yellow'
+                      : movie.vote_average < 4
+                      ? 'red'
+                      : '',
+                }"
+              >
+                {{ movie.vote_average * 10 }}%
+              </p>
+              <p
+                @mouseover="highlightMovie(index)"
+                @mouseleave="disableHighlightMovie()"
+                v-bind:style="{
+                  color:
+                    highlightMovieCredit && index === highlightIndex
+                      ? 'deepskyblue'
+                      : 'white',
+                  cursor: 'pointer',
+                }"
+                @click="openMovieCredit(movie)"
+              >
+                &nbsp; &nbsp; {{ movie.title }} ({{
+                  movie.release_date ? movie.release_date.split("-")[0] : ""
+                }})
+              </p>
+              <p class="character">
+                &nbsp; - &nbsp; <i>{{ movie.character }}</i>
+              </p>
+            </div>
+          </a-collapse-panel>
+        </a-collapse>
+
+        <a-collapse>
+          <a-collapse-panel key="2" header="TV" style="color: white">
+            <div
+              v-for="(tv, index) of tvCredits"
+              :key="tv.original_name"
+              class="movieCredit"
+            >
+              <p
+                v-bind:style="{
+                  color:
+                    tv.vote_average * 10 >= 7
+                      ? 'green'
+                      : tv.vote_average * 10 < 7 && tv.vote_average * 10 >= 4
+                      ? 'yellow'
+                      : 'red',
+                  cursor: 'pointer',
+                }"
+              >
+                {{ tv.vote_average * 10 }}%
+              </p>
+              <p
+                @mouseover="highlightTv(index)"
+                @mouseleave="disableHighlightTv()"
+                v-bind:style="{
+                  color:
+                    highlightTvCredit && index === highlightIndex
+                      ? 'deepskyblue'
+                      : 'white',
+                  cursor: 'pointer',
+                }"
+                @click="openTvCredit(tv)"
+              >
+                &nbsp; &nbsp; {{ tv.original_name }} ({{
+                  tv.first_air_date ? tv.first_air_date.split("-")[0] : ""
+                }})
+              </p>
+              <p class="character">
+                &nbsp; - &nbsp; <i>{{ tv.character }}</i>
+              </p>
+            </div>
+          </a-collapse-panel>
+        </a-collapse>
       </div>
     </div>
   </div>
@@ -171,7 +176,7 @@
 <script>
 import { Carousel, Slide, Pagination } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
-import { APIKEY } from '../../apiKey';
+import { APIKEY } from "../../apiKey";
 
 export default {
   components: {
@@ -203,6 +208,22 @@ export default {
         // 700px and up
         1024: {
           itemsToShow: 5,
+          snapAlign: "center",
+        },
+        // 1024 and up
+        1600: {
+          itemsToShow: 7,
+          snapAlign: "start",
+        },
+      },
+      settingsImg: {
+        itemsToShow: 8,
+        snapAlign: "center",
+      },
+      breakpointsImg: {
+        // 700px and up
+        1024: {
+          itemsToShow: 7,
           snapAlign: "center",
         },
         // 1024 and up
@@ -315,12 +336,12 @@ p {
   width: 78%;
   margin-top: -18px;
 }
-.top {
+/* .top {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: space-between;
-}
+} */
 .percent {
   position: absolute;
   border: 2px solid green;
@@ -351,5 +372,9 @@ p {
 .gallery {
   display: flex;
   flex-wrap: wrap;
+}
+.imageContent {
+  border-radius: 60px;
+  border: 1px solid teal;
 }
 </style>

@@ -19,7 +19,7 @@
                 }"
               />
               <img
-                :src="path + item[img]"
+                :src="item[img] !== null ? path + item[img] : noImage"
                 alt="Movies"
                 width="200"
                 height="275"
@@ -110,6 +110,8 @@ export default {
       checked: false,
       likedIndex: -1,
       addedIndex: -1,
+      noImage:
+        "https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483141.jpg",
       settings: {
         itemsToShow: 7,
         snapAlign: "center",

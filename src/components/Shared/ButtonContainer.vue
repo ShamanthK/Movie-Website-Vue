@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <button class="buttons">{{ title }}</button>
+  <div class="buttonC">
+    <div>
+      <button class="buttons">{{ title }}</button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['title'],
-}
+  props: ["title"],
+};
 </script>
 
 
@@ -20,5 +22,9 @@ export default {
   min-width: 125px;
   color: white;
   cursor: pointer;
+}
+.buttonC {
+  display: flex;
+  justify-content: center;
 }
 </style>

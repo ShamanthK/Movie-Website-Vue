@@ -1,5 +1,5 @@
 <template>
-  <h1>Popular Celebs</h1>
+  <h2 style="padding: 15px; color: white">Popular Celebs</h2>
   <div class="movieContainer">
     <div
       v-for="(celeb, index) of celebs"
@@ -7,13 +7,20 @@
       class="movieContent"
     >
       <div class="content">
-        <a-card hoverable style="width: 240px; border-radius: 20px">
+        <a-card
+          hoverable
+          style="
+            width: 165px;
+            border-radius: 20px;
+            border: 0px;
+            background: none;
+          "
+        >
           <template #cover>
             <img
               :src="imagePath + celeb.profile_path"
               alt="Movies"
-              width="225"
-              height="325"
+              height="225"
               class="imageContent"
               @mouseover="showOptions(index)"
               @mouseleave="hideOptions"
@@ -24,14 +31,8 @@
               }"
             />
           </template>
-          <a-card-meta>
-            <template #description
-              ><div>
-                <div class="title">{{ celeb.name }}</div>
-              </div>
-            </template>
-          </a-card-meta>
         </a-card>
+        <div class="title">{{ celeb.name }}</div>
       </div>
     </div>
   </div>
@@ -89,25 +90,19 @@ h1 {
   color: white;
 }
 .content {
-  width: 225px;
+  /* width: 225px; */
   border-radius: 25px;
   /* box-shadow: 0px 0px 2px 2px white; */
 }
 .imageContent {
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  width: 165px;
 }
 .title {
-  /* width: 225px; */
-  background-color: white;
-  color: gray;
-  /* height: 30px;
-  margin-top: -5px;
-  padding: 10px 0px 5px 0px;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px; */
+  color: white;
   justify-content: center;
   display: flex;
+  width: 165px;
+  margin-top: 21px;
 }
 .movieContent {
   padding: 20px;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Carousel :settings="settings"  :wrap-around="true">
+    <Carousel :settings="settings"  :wrap-around="true" :autoplay="5000">
       <Slide v-for="movie in movies" :key="movie.title">
         <div class="popular">
           <div class="popularContainer">
