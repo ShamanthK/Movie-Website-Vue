@@ -90,6 +90,7 @@ export default {
       await this.$store.dispatch("movies/loadMovieDetails", movie.id);
       await this.$store.dispatch("movies/loadMovieCredits", movie.id);
       await this.$store.dispatch("movies/movieVideos", movie.id);
+      await this.$store.dispatch("movies/userReviews", movie.id);
       this.$router.replace(`/movies/${movie.id}`);
     },
   },

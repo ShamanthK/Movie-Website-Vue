@@ -1,5 +1,5 @@
 <template>
-  <div class="movieContainer" v-if="!showAllCast">
+  <div class="movieContainer" v-if="!showAllCast && !showAllVideos">
     <img
       class="bc-image"
       :src="imagePath + movieDetails.backdrop_path"
@@ -169,18 +169,89 @@
       </div>
     </div>
   </div>
-  <div style="margin-top: 25px; margin-left: 25px">
+  <div class="castTitle" v-if="!showAllCast && !showAllVideos">
     <h1>Movie Videos</h1>
+    <button-container
+      title="View All"
+      @click="viewAllVideos"
+      v-if="movieVideos.length > 3"
+    ></button-container>
   </div>
   <div style="padding: 10px; display: flex; flex-wrap: wrap">
-    <div v-for="video of movieVideos" :key="video.key" style="padding: 30px">
+    <div
+      v-for="(video, index) of movieVideos"
+      :key="video.key"
+      style="padding: 30px"
+    >
       <YouTube
         :src="youtube + video.key"
         @ready="movie"
         ref="youtube"
         width="500"
+        v-if="index < 3 && !showAllVideos && !showAllCast"
+      />
+      <YouTube
+        :src="youtube + video.key"
+        @ready="movie"
+        ref="youtube"
+        width="500"
+        v-if="showAllVideos"
       />
     </div>
+  </div>
+  <div style="margin-left: 30px" v-if="!showAllCast && !showAllVideos">
+    <h1>User Reviews</h1>
+  </div>
+  <div>
+    <div
+      v-for="(review, index) of userReviews"
+      :key="review.id"
+      style="padding: 15px"
+    >
+      <div v-if="index < 3 && !showAllVideos && !showAllCast" class="reviews">
+        <h3>{{ review.author }}</h3>
+        <p>
+          Rating:
+          {{
+            review.author_details.rating !== null
+              ? `${review.author_details.rating}/10`
+              : "No Rating"
+          }}
+        </p>
+        <p>
+          {{ review.content }}
+        </p>
+      </div>
+    </div>
+    <button-container
+      title="View All Reviews"
+      @click="viewAllReviews"
+      v-if="userReviews.length > 3"
+    ></button-container>
+    <a-modal
+      v-model:visible="visible"
+      title="User Reviews"
+      @ok="handleOk"
+      bodyStyle="height: 600px; overflow-y: scroll"
+    >
+      <div v-for="review of userReviews" :key="review.id" style="padding: 15px">
+        <div>
+          <h3 style="color: black">{{ review.author }}</h3>
+          <p style="color: black">
+            Rating:
+            {{
+              review.author_details.rating !== null
+                ? `${review.author_details.rating}/10`
+                : "No Rating"
+            }}
+          </p>
+          <p style="color: black">
+            {{ review.content }}
+          </p>
+        </div>
+        <hr />
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -203,6 +274,10 @@ export default {
       checked: false,
       movieVideos: [],
       youtube: "https://www.youtube.com/watch?v=",
+      showAllVideos: false,
+      userReviews: [],
+      showAllReviews: false,
+      visible: false,
     };
   },
   created() {
@@ -213,13 +288,14 @@ export default {
       this.movieDetails = await this.$store.getters["movies/movieDetails"];
       this.movieCredits = await this.$store.getters["movies/movieCredits"];
       this.movieVideos = await this.$store.getters["movies/movieVideos"];
+      this.userReviews = await this.$store.getters["movies/movieReviews"];
       this.allCast = this.movieCredits.cast.filter(
         (cast) => cast.known_for_department === "Acting"
       );
       this.movieDetails.genres.forEach((g) => {
         this.genres.push(" " + g.name);
       });
-      console.log(this.movieCredits);
+      console.log(this.userReviews);
       this.movieVideos.forEach((video) => {
         console.log(video);
       });
@@ -233,6 +309,10 @@ export default {
     },
     goBack() {
       this.showAllCast = false;
+      this.showAllVideos = false;
+    },
+    viewAllVideos() {
+      this.showAllVideos = true;
     },
     showOptions(i) {
       this.hovered = true;
@@ -271,6 +351,12 @@ export default {
       // window.open(this.trailerLink, "youtubetrailer", windowFeatures);
       console.log("iframe: ", this.iFrameLink);
       window.open(this.iFrameLink, "youtubetrailer", windowFeatures);
+    },
+    viewAllReviews() {
+      this.visible = true;
+    },
+    handleOk() {
+      this.visible = false;
     },
     // onReady() {
     //   this.$refs.youtube.playVideo();
@@ -404,5 +490,10 @@ h3 {
   border-radius: 20px;
   padding: 20px;
   width: 250px;
+}
+.reviews {
+  border: 3px solid teal;
+  border-radius: 15px;
+  padding: 20px;
 }
 </style>

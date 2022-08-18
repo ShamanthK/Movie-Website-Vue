@@ -43,5 +43,9 @@ export default {
     setMovieVideos(state, payload) {
         console.log('payload: ', payload)
         state.movieVideos = payload.results
+    },
+    setUserReviews(state, payload) {
+        console.log('payload: ', payload)
+        state.movieReviews = payload.results
     }
 }

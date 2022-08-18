@@ -59,4 +59,8 @@ export default {
         console.log(state.movieVideos)
         return state.movieVideos
     },
+    movieReviews(state) {
+        console.log(state.movieReviews)
+        return state.movieReviews
+    },
 }

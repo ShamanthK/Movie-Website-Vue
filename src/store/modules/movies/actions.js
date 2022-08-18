@@ -116,5 +116,16 @@ export default {
         console.log('response: ', responseData)
         context.commit('setMovieVideos', responseData)
     },
+    async userReviews(context, payload) {
+        console.log(payload)
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${payload}/reviews?api_key=${APIKEY}&language=en-US&page=1`)
+        if (!response.ok) {
+            console.log('ok')
+        }
+
+        const responseData = await response.json()
+        console.log('response: ', responseData)
+        context.commit('setUserReviews', responseData)
+    },
 }
 
