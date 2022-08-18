@@ -39,5 +39,9 @@ export default {
     setSearchedMovies(state, payload) {
         console.log('payload: ', payload)
         state.searchedMovies = payload.results
+    },
+    setMovieVideos(state, payload) {
+        console.log('payload: ', payload)
+        state.movieVideos = payload.results
     }
 }

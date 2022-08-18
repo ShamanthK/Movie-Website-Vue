@@ -232,6 +232,7 @@ export default {
     async openMovie(id) {
       await this.$store.dispatch("movies/loadMovieDetails", id);
       await this.$store.dispatch("movies/loadMovieCredits", id);
+      await this.$store.dispatch("movies/movieVideos", id);
       this.$router.replace(`/movies/${id}`);
     },
   },

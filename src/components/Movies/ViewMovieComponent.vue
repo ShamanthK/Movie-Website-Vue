@@ -21,31 +21,19 @@
         <div>
           <h1>{{ movieDetails.title }}</h1>
           <p class="tagline">{{ movieDetails.tagline }}</p>
-          <div class="release">
-            <p>{{ genres.toString() }}</p>
-            <p>Released: {{ movieDetails.release_date }}</p>
-            <p>
-              Runtime: {{ Math.floor(movieDetails.runtime / 60) }}h
-              {{ movieDetails.runtime % 60 }}min
-            </p>
+          <div class="user"></div>
+        </div>
+
+        <div class="overview">
+          <div>
+            <h3>Overview</h3>
+            <p>{{ movieDetails.overview }}</p>
           </div>
-          <div class="user">
-            <div
-              class="rating"
-              v-bind:style="{
-                borderColor:
-                  movieDetails.vote_average >= 7
-                    ? 'green'
-                    : movieDetails.vote_average < 7 &&
-                      movieDetails.vote_average >= 4
-                    ? 'yellow'
-                    : movieDetails.vote_average < 4
-                    ? 'red'
-                    : '',
-              }"
-            >
-              <p class="number">{{ movieDetails.vote_average * 10 }}%</p>
-            </div>
+          <div class="actions">
+            <button-container
+              title="Play Trailer"
+              @click="playTrailer(movieDetails.id)"
+            ></button-container>
             <div class="watchlist">
               <font-awesome
                 icon="heart"
@@ -71,21 +59,51 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <div>
-          <h3>Overview</h3>
-          <p>{{ movieDetails.overview }}</p>
-        </div>
-        <div style="position: relative">
-          <button-container
-            title="Play Trailer"
-            @click="playTrailer(movieDetails.id)"
-          ></button-container>
+      <div style="padding-left: 100px">
+        <div class="movieDetails">
+          <div>
+            <h3>Genre:</h3>
+            <p>{{ genres.toString() }}</p>
+          </div>
+          <div>
+            <h3>Released:</h3>
+            <p>{{ movieDetails.release_date }}</p>
+          </div>
+          <div>
+            <h3>Runtime:</h3>
+            <p>
+              {{ Math.floor(movieDetails.runtime / 60) }}h
+              {{ movieDetails.runtime % 60 }}min
+            </p>
+          </div>
+          <div>
+            <h3>User Rating:</h3>
+            <div
+              class="rating"
+              v-bind:style="{
+                borderColor:
+                  movieDetails.vote_average >= 7
+                    ? 'green'
+                    : movieDetails.vote_average < 7 &&
+                      movieDetails.vote_average >= 4
+                    ? 'yellow'
+                    : movieDetails.vote_average < 4
+                    ? 'red'
+                    : '',
+              }"
+            >
+              <p class="number">
+                {{ Math.round(movieDetails.vote_average * 10) }}%
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="castTitle">
-      <h3>Cast</h3>
+      <h1>Cast</h1>
       <button-container
         title="View All"
         @click="viewAllCast"
@@ -121,7 +139,7 @@
 
   <div v-if="showAllCast">
     <div class="castTitle">
-      <h3>Cast</h3>
+      <h1>Cast</h1>
       <button-container title="Go Back" @click="goBack"></button-container>
     </div>
     <div class="allCast">
@@ -151,6 +169,19 @@
       </div>
     </div>
   </div>
+  <div style="margin-top: 25px; margin-left: 25px">
+    <h1>Movie Videos</h1>
+  </div>
+  <div style="padding: 10px; display: flex; flex-wrap: wrap">
+    <div v-for="video of movieVideos" :key="video.key" style="padding: 30px">
+      <YouTube
+        :src="youtube + video.key"
+        @ready="movie"
+        ref="youtube"
+        width="500"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -170,6 +201,8 @@ export default {
       hoveredIndex: -1,
       liked: false,
       checked: false,
+      movieVideos: [],
+      youtube: "https://www.youtube.com/watch?v=",
     };
   },
   created() {
@@ -179,13 +212,17 @@ export default {
     async loadMovieDetails() {
       this.movieDetails = await this.$store.getters["movies/movieDetails"];
       this.movieCredits = await this.$store.getters["movies/movieCredits"];
+      this.movieVideos = await this.$store.getters["movies/movieVideos"];
       this.allCast = this.movieCredits.cast.filter(
         (cast) => cast.known_for_department === "Acting"
       );
       this.movieDetails.genres.forEach((g) => {
         this.genres.push(" " + g.name);
       });
-      console.log(this.allCast, this.spliceCast);
+      console.log(this.movieCredits);
+      this.movieVideos.forEach((video) => {
+        console.log(video);
+      });
       const cloneCast = this.allCast.slice(0);
       this.spliceCast = cloneCast.splice(0, 10);
       console.log(this.allCast, this.spliceCast);
@@ -235,6 +272,9 @@ export default {
       console.log("iframe: ", this.iFrameLink);
       window.open(this.iFrameLink, "youtubetrailer", windowFeatures);
     },
+    // onReady() {
+    //   this.$refs.youtube.playVideo();
+    // },
   },
 };
 </script>
@@ -252,8 +292,8 @@ h3 {
   color: white;
 }
 .movieContainer {
-  width: 100vw;
-  height: 92.7vh;
+  width: 99vw;
+  height: 93.4vh;
   border-radius: 15px;
   display: flex;
   overflow: hidden;
@@ -282,10 +322,9 @@ h3 {
 }
 .content {
   padding-left: 100px;
-  width: 60%;
+  width: 55%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 .tagline {
   color: gray;
@@ -315,6 +354,7 @@ h3 {
   justify-content: space-between;
   margin-left: 30px;
   margin-right: 30px;
+  margin-top: 35px;
   position: relative;
 }
 .name {
@@ -341,5 +381,28 @@ h3 {
   width: 100px;
   margin-top: 7px;
   position: relative;
+}
+.ratingContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+.actions {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 30%;
+}
+.overview {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 65%;
+}
+.movieDetails {
+  border: 3px solid teal;
+  border-radius: 20px;
+  padding: 20px;
+  width: 250px;
 }
 </style>

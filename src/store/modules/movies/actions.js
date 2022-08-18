@@ -105,5 +105,16 @@ export default {
         console.log('response: ', responseData)
         context.commit('setSearchedMovies', responseData)
     },
+    async movieVideos(context, payload) {
+        console.log(payload)
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${payload}/videos?api_key=${APIKEY}&language=en-US`)
+        if (!response.ok) {
+            console.log('ok')
+        }
+
+        const responseData = await response.json()
+        console.log('response: ', responseData)
+        context.commit('setMovieVideos', responseData)
+    },
 }
 

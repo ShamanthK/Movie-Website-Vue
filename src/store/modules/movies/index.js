@@ -17,7 +17,8 @@ export default {
             watchlistMovies: [],
             likedTv: [],
             watchlistTv: [],
-            searchedMovies: []
+            searchedMovies: [],
+            movieVideos: []
         }
     },
     mutations,

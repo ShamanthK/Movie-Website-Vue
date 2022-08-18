@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Carousel :settings="settings"  :wrap-around="true" :autoplay="5000">
+    <Carousel :settings="settings" :wrap-around="true" :autoplay="5000">
       <Slide v-for="movie in movies" :key="movie.title">
         <div class="popular">
           <div class="popularContainer">
@@ -19,7 +19,7 @@
                 height="275"
                 class="imageContent"
               />
-              <p style="width:200px; margin-top:15px">{{ movie.title }}</p>
+              <p style="width: 200px; margin-top: 15px">{{ movie.title }}</p>
             </div>
             <div>
               <div class="desc">
@@ -89,6 +89,7 @@ export default {
       console.log("movie: ", movie.title);
       await this.$store.dispatch("movies/loadMovieDetails", movie.id);
       await this.$store.dispatch("movies/loadMovieCredits", movie.id);
+      await this.$store.dispatch("movies/movieVideos", movie.id);
       this.$router.replace(`/movies/${movie.id}`);
     },
   },
