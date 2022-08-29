@@ -78,4 +78,15 @@ export default {
 
         context.commit('setTvVideos', responseData)
     },
+    async loadTvEpisodesAndSeasons(context, payload) {
+        const response = await fetch(`https://api.themoviedb.org/3/tv/${payload.id}/season/${payload.num}?api_key=${APIKEY}&language=en-US`)
+        if (!response.ok) {
+            console.log('ok')
+        }
+
+        const responseData = await response.json()
+        console.log('response: ', responseData)
+
+        context.commit('setTvEpisodesAndSeasons', responseData)
+    },
 }

@@ -25,5 +25,9 @@ export default {
     tvVideos(state) {
         console.log(state.tvVideos)
         return state.tvVideos
+    },
+    tvEpisodesAndSeasons(state) {
+        console.log(state.tvEpisodesAndSeasons)
+        return state.tvEpisodesAndSeasons
     }
 }

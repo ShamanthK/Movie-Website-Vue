@@ -21,5 +21,8 @@ export default {
     },
     setTvVideos(state, payload) {
         state.tvVideos = payload.results
+    },
+    setTvEpisodesAndSeasons(state, payload) {
+        state.tvEpisodesAndSeasons = payload.episodes
     }
 }

@@ -31,15 +31,15 @@
             }})
           </h1>
           <p class="tagline">{{ movieDetails.tagline }}</p>
-          <div class="release">
+          <!-- <div class="release">
             <p>{{ genres.toString() }}</p>
             <p>First Air Date: {{ movieDetails.first_air_date }}</p>
             <p>
               Runtime: {{ Math.floor(runTime[0] / 60) }}h
               {{ runTime[0] % 60 }}min
             </p>
-          </div>
-          <div class="user">
+          </div> -->
+          <!-- <div class="user">
             <div
               class="rating"
               v-bind:style="{
@@ -56,6 +56,20 @@
             >
               <p class="number">{{ movieDetails.vote_average * 10 }}%</p>
             </div>
+            
+          </div> -->
+        </div>
+
+        <div class="overview">
+          <div>
+            <h3>Overview</h3>
+            <p>{{ movieDetails.overview }}</p>
+          </div>
+          <div class="stream">
+            <button-container
+              title="Play Trailer"
+              @click="playTrailer(movieDetails.id)"
+            ></button-container>
             <div class="watchlist">
               <font-awesome
                 icon="heart"
@@ -79,25 +93,51 @@
                 @click="removeContent()"
               />
             </div>
-          </div>
-        </div>
-
-        <div>
-          <h3>Overview</h3>
-          <p>{{ movieDetails.overview }}</p>
-        </div>
-        <div class="seasons">
-          <p>Seasons: {{ movieDetails.number_of_seasons }}</p>
-          <p>Episodes: {{ movieDetails.number_of_episodes }}</p>
-        </div>
-
-        <div>
-          <div class="stream">
-            <button-container
-              title="Play Trailer"
-              @click="playTrailer(movieDetails.id)"
-            ></button-container>
-            <div class="network">
+            <div style="margin-top: 10px">
+              <h3>Stream On: {{ movieDetails.networks[0].name }}</h3>
+            </div>
+            <div style="margin-top: 10px">
+              <h3>
+                <a @click="openGuide()">View All Seasons and Episodes</a>
+              </h3>
+              <a-modal
+                v-model:visible="visible"
+                title="Seasons & Episodes"
+                @ok="handleOk"
+                bodyStyle="height: 600px; overflow-y: scroll"
+              >
+                <a-tabs v-model:activeKey="activeKey">
+                  <a-tab-pane
+                    v-for="(season, index) in allEpisodes"
+                    :key="index"
+                    :tab="`Season ${index + 1}`"
+                  >
+                    <div
+                      v-for="episode in season"
+                      :key="episode.id"
+                      style="margin-bottom: 20px"
+                    >
+                      <div
+                        style="display: flex; justify-content: space-between"
+                      >
+                        <h3 style="color: black">{{ episode.name }}</h3>
+                        <p style="color: grey; font-style: italic">
+                          Rating: {{ episode.vote_average.toFixed(1) }}
+                        </p>
+                        <p style="color: grey; font-style: italic">
+                          Aired On: {{ episode.air_date }}
+                        </p>
+                      </div>
+                      <p style="color: grey">
+                        {{ episode.overview }} ({{ episode.runtime }}min)
+                      </p>
+                      <hr />
+                    </div>
+                  </a-tab-pane>
+                </a-tabs>
+              </a-modal>
+            </div>
+            <!-- <div class="network">
               <p>Watch now:</p>
               <a :href="streamLink" target="_blank"
                 ><img
@@ -107,8 +147,52 @@
                   height="40"
                   class="imageContent"
               /></a>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div style="padding-left: 100px">
+        <div class="tvDetails">
+          <div>
+            <h3>Genre:</h3>
+            <p>{{ genres.toString() }}</p>
+          </div>
+          <div>
+            <h3>First Air Date:</h3>
+            <p>{{ movieDetails.first_air_date }}</p>
+          </div>
+          <div>
+            <h3>Season and Episodes:</h3>
+            <p>
+              {{ movieDetails.number_of_seasons }} seasons,
+              {{ movieDetails.number_of_episodes }} episodes
+            </p>
+          </div>
+          <div class="user">
+            <h3>User Rating:</h3>
+            <div
+              class="rating"
+              v-bind:style="{
+                borderColor:
+                  movieDetails.vote_average >= 7
+                    ? 'green'
+                    : movieDetails.vote_average < 7 &&
+                      movieDetails.vote_average >= 4
+                    ? 'yellow'
+                    : movieDetails.vote_average < 4
+                    ? 'red'
+                    : '',
+              }"
+            >
+              <p class="number">
+                {{ Math.round(movieDetails.vote_average * 10) }}%
+              </p>
             </div>
           </div>
+          <!-- <div>
+            <p>Status:</p>
+            <p>{{ movieDetails.status }}</p>
+          </div> -->
         </div>
       </div>
     </div>
@@ -175,6 +259,8 @@
 
 <script>
 import setLinks from "../../links.js";
+import { useRoute } from "vue-router";
+import { ref } from "vue";
 
 export default {
   data() {
@@ -194,6 +280,10 @@ export default {
       liked: false,
       checked: false,
       iFrameLink: "",
+      episodesAndseasons: [],
+      visible: false,
+      allEpisodes: [],
+      activeKey: ref(0),
     };
   },
   created() {
@@ -215,6 +305,19 @@ export default {
       const cloneCast = this.allCast.slice(0);
       this.spliceCast = cloneCast.splice(0, 10);
       this.streamLink = setLinks(this.movieDetails.networks[0].name);
+      const route = useRoute();
+      console.log(route.params);
+      for (let i = 0; i < this.movieDetails.number_of_seasons; i++) {
+        await this.$store.dispatch("tv/loadTvEpisodesAndSeasons", {
+          id: route.params.id,
+          num: i + 1,
+        });
+        this.episodesAndseasons = await this.$store.getters[
+          "tv/tvEpisodesAndSeasons"
+        ];
+        this.allEpisodes.push(this.episodesAndseasons);
+      }
+      console.log(this.allEpisodes);
     },
     async playTrailer(movieId) {
       await this.$store.dispatch("tv/loadTvVideos", movieId);
@@ -259,6 +362,12 @@ export default {
     removeContent() {
       this.checked = false;
     },
+    async openGuide() {
+      this.visible = true;
+    },
+    handleOk() {
+      this.visible = false;
+    },
   },
 };
 </script>
@@ -277,7 +386,7 @@ h3 {
 }
 .movieContainer {
   width: 100vw;
-  height: 92.7vh;
+  height: 93.4vh;
   border-radius: 15px;
   display: flex;
   overflow: hidden;
@@ -356,6 +465,7 @@ h3 {
   position: relative;
   display: flex;
   justify-content: space-between;
+  width: 90%;
 }
 .network {
   display: flex;
@@ -369,16 +479,28 @@ h3 {
   position: relative;
   flex-wrap: wrap;
 }
-.user {
+/* .user {
   display: flex;
   justify-content: space-between;
   width: 20%;
-}
+} */
 .watchlist {
   display: flex;
   justify-content: space-between;
   width: 100px;
   margin-top: 7px;
   position: relative;
+}
+.overview {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 65%;
+}
+.tvDetails {
+  border: 3px solid teal;
+  border-radius: 20px;
+  padding: 20px;
+  width: 250px;
 }
 </style>

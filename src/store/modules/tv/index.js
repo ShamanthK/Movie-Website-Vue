@@ -12,7 +12,8 @@ export default {
             topRatedTv: [],
             onTv: [],
             airingToday: [],
-            tvVideos: []
+            tvVideos: [],
+            tvEpisodesAndSeasons: []
         }
     },
     mutations,
