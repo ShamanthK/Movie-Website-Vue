@@ -1,132 +1,143 @@
 <template>
-  <div class="searchInput">
-    <search-component type="movie"></search-component>
+  <div class="searchAndSwitch">
+    <a-radio-group v-model:value="movieOption" button-style="solid">
+      <a-radio-button value="Popular" style="width: 150px"
+        >Popular</a-radio-button
+      >
+      <a-radio-button value="Top Rated" style="width: 150px"
+        >Top Rated</a-radio-button
+      >
+      <a-radio-button value="Upcoming" style="width: 150px"
+        >Upcoming</a-radio-button
+      >
+    </a-radio-group>
+    <div class="searchInput">
+      <search-component type="movie"></search-component>
+    </div>
   </div>
-  <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="1" tab="Popular">
-      <div class="movieContainer">
-        <div
-          v-for="(movie, index) of popularMovies"
-          :key="movie.title"
-          class="movieContent"
+
+  <div class="movieContainer" v-if="movieOption === 'Popular'">
+    <div
+      v-for="(movie, index) of popularMovies"
+      :key="movie.title"
+      class="movieContent"
+    >
+      <div class="content" @click="openMovie(movie.id)">
+        <a-card
+          hoverable
+          style="
+            width: 165px;
+            border-radius: 20px;
+            border: 0px;
+            background: none;
+          "
         >
-          <div class="content" @click="openMovie(movie.id)">
-            <a-card
-              hoverable
-              style="
-                width: 165px;
-                border-radius: 20px;
-                border: 0px;
-                background: none;
-              "
-            >
-              <template #cover>
-                <img
-                  :src="imagePath + movie.poster_path"
-                  alt="Movies"
-                  height="225"
-                  class="imageContent"
-                  @mouseover="showOptions(index)"
-                  @mouseleave="hideOptions"
-                  v-bind:style="{
-                    opacity: hovered && index === hoveredIndex ? '0.3' : '1',
-                    cursor: 'pointer',
-                  }"
-                />
-              </template>
-            </a-card>
-            <div class="title">{{ movie.title }}</div>
-          </div>
-        </div>
+          <template #cover>
+            <img
+              :src="imagePath + movie.poster_path"
+              alt="Movies"
+              height="225"
+              class="imageContent"
+              @mouseover="showOptions(index)"
+              @mouseleave="hideOptions"
+              v-bind:style="{
+                opacity: hovered && index === hoveredIndex ? '0.3' : '1',
+                cursor: 'pointer',
+              }"
+            />
+          </template>
+        </a-card>
+        <div class="title">{{ movie.title }}</div>
       </div>
-      <button-container
-        title="Load More"
-        @click="loadMoreMovies('popular')"
-      ></button-container>
-    </a-tab-pane>
-    <a-tab-pane key="2" tab="Top Rated">
-      <div class="movieContainer">
-        <div
-          v-for="(movie, index) of topRatedMovies"
-          :key="movie.title"
-          class="movieContent"
+    </div>
+  </div>
+  <button-container
+    v-if="movieOption === 'Popular'"
+    title="Load More"
+    @click="loadMoreMovies('popular')"
+  ></button-container>
+
+  <div class="movieContainer" v-if="movieOption === 'Top Rated'">
+    <div
+      v-for="(movie, index) of topRatedMovies"
+      :key="movie.title"
+      class="movieContent"
+    >
+      <div class="content" @click="openMovie(movie.id)">
+        <a-card
+          hoverable
+          style="
+            width: 165px;
+            border-radius: 20px;
+            border: 0px;
+            background: none;
+          "
         >
-          <div class="content" @click="openMovie(movie.id)">
-            <a-card
-              hoverable
-              style="
-                width: 165px;
-                border-radius: 20px;
-                border: 0px;
-                background: none;
-              "
-            >
-              <template #cover>
-                <img
-                  :src="imagePath + movie.poster_path"
-                  alt="Movies"
-                  height="225"
-                  class="imageContent"
-                  @mouseover="showOptions(index)"
-                  @mouseleave="hideOptions"
-                  v-bind:style="{
-                    opacity: hovered && index === hoveredIndex ? '0.3' : '1',
-                    cursor: 'pointer',
-                  }"
-                />
-              </template>
-            </a-card>
-            <div class="title">{{ movie.title }}</div>
-          </div>
-        </div>
+          <template #cover>
+            <img
+              :src="imagePath + movie.poster_path"
+              alt="Movies"
+              height="225"
+              class="imageContent"
+              @mouseover="showOptions(index)"
+              @mouseleave="hideOptions"
+              v-bind:style="{
+                opacity: hovered && index === hoveredIndex ? '0.3' : '1',
+                cursor: 'pointer',
+              }"
+            />
+          </template>
+        </a-card>
+        <div class="title">{{ movie.title }}</div>
       </div>
-      <button-container
-        title="Load More"
-        @click="loadMoreMovies('topRated')"
-      ></button-container>
-    </a-tab-pane>
-    <a-tab-pane key="3" tab="Upcoming">
-      <div class="movieContainer">
-        <div
-          v-for="(movie, index) of upcomingMovies"
-          :key="movie.title"
-          class="movieContent"
+    </div>
+  </div>
+  <button-container
+    v-if="movieOption === 'Top Rated'"
+    title="Load More"
+    @click="loadMoreMovies('topRated')"
+  ></button-container>
+
+  <div class="movieContainer" v-if="movieOption === 'Upcoming'">
+    <div
+      v-for="(movie, index) of upcomingMovies"
+      :key="movie.title"
+      class="movieContent"
+    >
+      <div class="content" @click="openMovie(movie.id)">
+        <a-card
+          hoverable
+          style="
+            width: 165px;
+            border-radius: 20px;
+            border: 0px;
+            background: none;
+          "
         >
-          <div class="content" @click="openMovie(movie.id)">
-            <a-card
-              hoverable
-              style="
-                width: 165px;
-                border-radius: 20px;
-                border: 0px;
-                background: none;
-              "
-            >
-              <template #cover>
-                <img
-                  :src="imagePath + movie.poster_path"
-                  alt="Movies"
-                  height="225"
-                  class="imageContent"
-                  @mouseover="showOptions(index)"
-                  @mouseleave="hideOptions"
-                  v-bind:style="{
-                    opacity: hovered && index === hoveredIndex ? '0.3' : '1',
-                    cursor: 'pointer',
-                  }"
-                />
-              </template>
-            </a-card>
-            <div class="title">{{ movie.title }}</div>
-          </div>
-        </div>
+          <template #cover>
+            <img
+              :src="imagePath + movie.poster_path"
+              alt="Movies"
+              height="225"
+              class="imageContent"
+              @mouseover="showOptions(index)"
+              @mouseleave="hideOptions"
+              v-bind:style="{
+                opacity: hovered && index === hoveredIndex ? '0.3' : '1',
+                cursor: 'pointer',
+              }"
+            />
+          </template>
+        </a-card>
+        <div class="title">{{ movie.title }}</div>
       </div>
-      <button-container
-        title="Load More"
-        @click="loadMoreMovies('upcoming')"
-      ></button-container>
-    </a-tab-pane>
-  </a-tabs>
+    </div>
+  </div>
+  <button-container
+    v-if="movieOption === 'Upcoming'"
+    title="Load More"
+    @click="loadMoreMovies('upcoming')"
+  ></button-container>
 </template>
 
 <script>
@@ -155,6 +166,7 @@ export default {
       hovered: false,
       hoveredIndex: -1,
       activeKey: ref("1"),
+      movieOption: ref("Popular"),
     };
   },
   async created() {
@@ -169,7 +181,7 @@ export default {
       this.upcomingNumber
     );
     this.upcomingMovies = await this.$store.getters["movies/upcomingMovies"];
-    console.log(this.popularMovies);
+    console.log(this.movieOption);
     console.log(this.topRatedMovies);
   },
   methods: {
@@ -274,9 +286,14 @@ div {
   flex-wrap: wrap;
   padding: 25px;
 }
-.searchInput {
+/* .searchInput {
   display: flex;
   justify-content: center;
   padding: 50px;
+} */
+.searchAndSwitch {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>
