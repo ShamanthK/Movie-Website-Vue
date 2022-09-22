@@ -1,132 +1,136 @@
 <template>
-  <div class="searchInput">
-    <search-component type="tv"></search-component>
+  <div class="searchAndSwitch">
+    <a-radio-group v-model:value="tvOption" button-style="solid">
+      <a-radio-button value="Top Rated" style="width: 150px"
+        >Top Rated</a-radio-button
+      >
+      <a-radio-button value="Popular" style="width: 150px"
+        >Popular</a-radio-button
+      >
+      <a-radio-button value="Airing Today" style="width: 150px"
+        >Airing Today</a-radio-button
+      >
+    </a-radio-group>
+    <div class="searchInput">
+      <search-component type="tv"></search-component>
+    </div>
   </div>
-  <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="1" tab="Top Rated">
-      <div class="movieContainer">
-        <div
-          v-for="(tv, index) of topRatedTv"
-          :key="tv.name"
-          class="movieContent"
+  <div class="tvContainer" v-if="tvOption === 'Top Rated'">
+    <div v-for="(tv, index) of topRatedTv" :key="tv.name" class="movieContent">
+      <div class="content" @click="openTv(tv)">
+        <a-card
+          hoverable
+          style="
+            width: 165px;
+            border-radius: 20px;
+            border: 0px;
+            background: none;
+          "
         >
-          <div class="content" @click="openTv(tv)">
-            <a-card
-              hoverable
-              style="
-                width: 165px;
-                border-radius: 20px;
-                border: 0px;
-                background: none;
-              "
-            >
-              <template #cover>
-                <img
-                  :src="imagePath + tv.poster_path"
-                  alt="Movies"
-                  height="225"
-                  class="imageContent"
-                  @mouseover="showOptions(index)"
-                  @mouseleave="hideOptions"
-                  v-bind:style="{
-                    opacity: hovered && index === hoveredIndex ? '0.3' : '1',
-                    cursor: 'pointer',
-                  }"
-                />
-              </template>
-            </a-card>
-            <div class="title">{{ tv.name }}</div>
-          </div>
-        </div>
+          <template #cover>
+            <img
+              :src="imagePath + tv.poster_path"
+              alt="Movies"
+              height="225"
+              class="imageContent"
+              @mouseover="showOptions(index)"
+              @mouseleave="hideOptions"
+              v-bind:style="{
+                opacity: hovered && index === hoveredIndex ? '0.3' : '1',
+                cursor: 'pointer',
+              }"
+            />
+          </template>
+        </a-card>
+        <div class="title">{{ tv.name }}</div>
       </div>
-      <button-container
-        title="Load More"
-        @click="loadMoreTv('topRated')"
-      ></button-container>
-    </a-tab-pane>
-    <a-tab-pane key="2" tab="Popular" force-render>
-      <div class="movieContainer">
-        <div
-          v-for="(tv, index) of onTelevision"
-          :key="tv.name"
-          class="movieContent"
+    </div>
+  </div>
+  <button-container
+    v-if="tvOption === 'Top Rated'"
+    title="Load More"
+    @click="loadMoreTv('topRated')"
+  ></button-container>
+  <div class="tvContainer" v-if="tvOption === 'Popular'">
+    <div
+      v-for="(tv, index) of onTelevision"
+      :key="tv.name"
+      class="movieContent"
+    >
+      <div class="content" @click="openTv(tv)">
+        <a-card
+          hoverable
+          style="
+            width: 165px;
+            border-radius: 20px;
+            border: 0px;
+            background: none;
+          "
         >
-          <div class="content" @click="openTv(tv)">
-            <a-card
-              hoverable
-              style="
-                width: 165px;
-                border-radius: 20px;
-                border: 0px;
-                background: none;
-              "
-            >
-              <template #cover>
-                <img
-                  :src="imagePath + tv.poster_path"
-                  alt="Movies"
-                  height="225"
-                  class="imageContent"
-                  @mouseover="showOptions(index)"
-                  @mouseleave="hideOptions"
-                  v-bind:style="{
-                    opacity: hovered && index === hoveredIndex ? '0.3' : '1',
-                    cursor: 'pointer',
-                  }"
-                />
-              </template>
-            </a-card>
-            <div class="title">{{ tv.name }}</div>
-          </div>
-        </div>
+          <template #cover>
+            <img
+              :src="imagePath + tv.poster_path"
+              alt="Movies"
+              height="225"
+              class="imageContent"
+              @mouseover="showOptions(index)"
+              @mouseleave="hideOptions"
+              v-bind:style="{
+                opacity: hovered && index === hoveredIndex ? '0.3' : '1',
+                cursor: 'pointer',
+              }"
+            />
+          </template>
+        </a-card>
+        <div class="title">{{ tv.name }}</div>
       </div>
-      <button-container
-        title="Load More"
-        @click="loadMoreTv('onTv')"
-      ></button-container>
-    </a-tab-pane>
-    <a-tab-pane key="3" tab="Airing Today">
-      <div class="movieContainer">
-        <div
-          v-for="(tv, index) of airingTodayTv"
-          :key="tv.name"
-          class="movieContent"
+    </div>
+  </div>
+  <button-container
+    v-if="tvOption === 'Popular'"
+    title="Load More"
+    @click="loadMoreTv('popular')"
+  ></button-container>
+  <div class="tvContainer" v-if="tvOption === 'Airing Today'">
+    <div
+      v-for="(tv, index) of airingTodayTv"
+      :key="tv.name"
+      class="movieContent"
+    >
+      <div class="content" @click="openTv(tv)">
+        <a-card
+          hoverable
+          style="
+            width: 165px;
+            border-radius: 20px;
+            border: 0px;
+            background: none;
+          "
         >
-          <div class="content" @click="openTv(tv)">
-            <a-card
-              hoverable
-              style="
-                width: 165px;
-                border-radius: 20px;
-                border: 0px;
-                background: none;
-              "
-            >
-              <template #cover>
-                <img
-                  :src="imagePath + tv.poster_path"
-                  alt="Movies"
-                  height="225"
-                  class="imageContent"
-                  @mouseover="showOptions(index)"
-                  @mouseleave="hideOptions"
-                  v-bind:style="{
-                    opacity: hovered && index === hoveredIndex ? '0.3' : '1',
-                    cursor: 'pointer',
-                  }"
-                />
-              </template>
-            </a-card>
-            <div class="title">{{ tv.name }}</div>
-          </div>
-        </div>
+          <template #cover>
+            <img
+              :src="imagePath + tv.poster_path"
+              alt="Movies"
+              height="225"
+              class="imageContent"
+              @mouseover="showOptions(index)"
+              @mouseleave="hideOptions"
+              v-bind:style="{
+                opacity: hovered && index === hoveredIndex ? '0.3' : '1',
+                cursor: 'pointer',
+              }"
+            />
+          </template>
+        </a-card>
+        <div class="title">{{ tv.name }}</div>
       </div>
-      <button-container
-        title="Load More"
-        @click="loadMoreTv('airingToday')"
-      ></button-container>
-    </a-tab-pane>
-  </a-tabs>
+    </div>
+  </div>
+  <button-container
+    v-if="tvOption === 'Airing Today'"
+    title="Load More"
+    @click="loadMoreTv('airingToday')"
+  ></button-container>
 </template>
 
 <script>
@@ -155,6 +159,7 @@ export default {
       hovered: false,
       hoveredIndex: -1,
       activeKey: ref("1"),
+      tvOption: ref("Top Rated"),
     };
   },
   async created() {
@@ -199,7 +204,7 @@ export default {
         this.loadTopRated.forEach((movie) => {
           this.topRatedTv.push(movie);
         });
-      } else if (tab === "onTv") {
+      } else if (tab === "popular") {
         this.onTvNumber = this.onTvNumber + 1;
         await this.$store.dispatch("tv/loadPopularTv", this.onTvNumber);
         this.loadOnTv = await this.$store.getters["tv/popularTv"];
@@ -250,13 +255,19 @@ div {
 .movieContent {
   padding: 20px;
 }
-.movieContainer {
+.tvContainer {
   display: flex;
   flex-wrap: wrap;
+  padding: 25px;
 }
-.searchInput {
+/* .searchInput {
   display: flex;
   justify-content: center;
   padding: 50px;
+} */
+.searchAndSwitch {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>
